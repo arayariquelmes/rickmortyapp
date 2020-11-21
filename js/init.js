@@ -1,6 +1,29 @@
 
 window.mostrarPersonaje = function(){
-  console.log(this.personaje);  
+  //Tomar todos los datos del personaje y renderizarlos dentro de un clon del molde
+  //1. Crear molde
+  let molde = document.querySelector('.molde-personaje-sa').cloneNode(true);
+  let personaje = this.personaje;
+  molde.querySelector('.nombre-per').innerText = personaje.name;
+  molde.querySelector('.especie-per').innerText = personaje.species;
+  molde.querySelector('.genero-per').innerText = personaje.gender;
+
+  const icono = molde.querySelector('.icono-estado');
+
+  if(personaje.status == "Dead"){
+    icono.classList.add("fas","fa-skull-crossbones", "text-danger");
+  }else if(personaje.status == "Alive"){
+      icono.classList.add("fab","fa-odnoklassniki", "text-primary");
+  } else if(personaje.status == "unknown"){
+      icono.classList.add("fas","fa-question", "text-success");
+  }
+
+  molde.querySelector('.imagen-per').src = personaje.image;
+
+  Swal.fire({
+      title: personaje.name,
+      html: molde.innerHTML
+  });
 };
 
 window.mostrar = (personajes)=>{
