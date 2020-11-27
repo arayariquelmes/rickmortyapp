@@ -1,6 +1,11 @@
 //Registro del service worker
 if(navigator.serviceWorker){//Esta disponible trabajar con service worker en este navegador?
-    navigator.serviceWorker.register("/sw.js");
+    if(window.location.href.includes("localhost")){
+        navigator.serviceWorker.register("/sw.js");
+    } else {
+        //Esta servidor en un servidor web (github pages)
+        navigator.serviceWorker.register("/rickmortyduoc/sw.js");
+    }
 }
 
 window.mostrarPersonaje = function(){

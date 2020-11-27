@@ -15,13 +15,13 @@
 //Los recursos
 //Poner todo lo que pase por el proceso de cache
 const APP_SHELL = [
-    "/",
-    "/index.html",
-    "/vendor/fontawesome-free-5.15.1-web/css/all.min.css",
-    "/css/style.css",
-    "/img/logo.svg",
-    "/ubicaciones.html",
-    "/js/init.js"
+    //"/",
+    "index.html",
+    "vendor/fontawesome-free-5.15.1-web/css/all.min.css",
+    "css/style.css",
+    "img/logo.svg",
+    "ubicaciones.html",
+    "js/init.js"
 ];
 //Del contenido del app shell, que cosas jamas de los jamases deberia cambiar
 const APP_SHELL_INMUTABLE =[
@@ -47,20 +47,47 @@ self.addEventListener('install', e=>{
 
 //Esto se ejecuta una vez cuando el service worker se activa
 self.addEventListener('activate', e=>{
+    //Limpiar caches antiguos
     console.log("El service worker fue activado");
 });
 
 //Esto se ejecuta por cada una de las peticiones que haga el navegador
 self.addEventListener('fetch', e=>{
     
-    // if(e.request.url.includes('index.html')){
-    //     //Retornar otra peticion
-    //     let respuesta = new Response(
-    //         "<h1>Hola esta pagina es mentirosa, no es la original</h1>"
-    //         , {headers:{'Content-Type':'text/html'}});
-    //     e.respondWith(respuesta);
-    // } else {
-    //     e.respondWith(e.request);
-    // }
+    //Preguntarme si la peticion que estoy recibiendo se encuentra dentro de algun cache
+    //Si se encuentra en el cache la voy a servir desde ahi, sino voy a buscarla a la red
+    //Cache con Network Fallback
+
+    const respuesta = caches.match(e.request).then(res=>{
+        //Me voy a preguntar si la respuesta esta en el cache
+        //Voy a hacer esta estrategia exceptuando con la api
+        if(res && !e.request.url.includes("/api")){
+            return res;
+        } else {
+            //Con la API voy a usar la estragia Network with Cache Fallback
+            //Voy a internet, si la internet F, sirvo del cache
+            //Hacer la petición a internet
+            const petInternet = fetch(e.request).then(newRes=>{
+                //Si la respuesta es correcta
+                if(newRes.ok || newRes.type == 'opaque'){
+                    //La guardo en el cache dinamico
+                    return caches.open("dinamico-v1").then(cache=>{
+                        //Con esto se guarda en el cache, se debe clonar porque una promesa puede ser resuelta solo una vez
+                        cache.put(e.request, newRes.clone());
+                        return newRes.clone();
+                    });
+                }else {
+                    //Si no funciono el cache, si no funcionó la internet, F
+                    //Retornas la respuesta de error normalmente
+                    console.log(newRes);
+                    return newRes;
+                }
+
+            }).catch(error=>caches.match(e.request));
+            return petInternet;
+        }
+    });
+    
+    e.respondWith(respuesta);
 
 });
