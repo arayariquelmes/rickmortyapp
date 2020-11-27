@@ -1,3 +1,7 @@
+//Registro del service worker
+if(navigator.serviceWorker){//Esta disponible trabajar con service worker en este navegador?
+    navigator.serviceWorker.register("/sw.js");
+}
 
 window.mostrarPersonaje = function(){
   //Tomar todos los datos del personaje y renderizarlos dentro de un clon del molde
