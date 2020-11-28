@@ -2,7 +2,7 @@
 if(navigator.serviceWorker){//Esta disponible trabajar con service worker en este navegador?
     if(window.location.href.includes("localhost")){
         navigator.serviceWorker.register("/sw.js");
-    } else {
+    } else { 
         //Esta servidor en un servidor web (github pages)
         navigator.serviceWorker.register("/rickmortyduoc/sw.js");
     }
