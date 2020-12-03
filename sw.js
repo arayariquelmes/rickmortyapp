@@ -15,7 +15,7 @@
 //Los recursos
 //Poner todo lo que pase por el proceso de cache
 const APP_SHELL = [
-    //"/",
+    //"rickmortyduoc/",
     "index.html",
     "vendor/fontawesome-free-5.15.1-web/css/all.min.css",
     "css/style.css",
